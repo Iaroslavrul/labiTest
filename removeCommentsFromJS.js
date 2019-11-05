@@ -1,6 +1,5 @@
-const {readFileSync} = require('fs');
-const {writeFileSync} = require('fs');
-const code = readFileSync('./test1.js', 'utf-8');
+const {readFileSync, writeFileSync} = require('fs');
+const code = readFileSync('./removeCommentsFromDOM.js', 'utf-8');
 const RegExpForLineComment = /\/\/.*?$/gm;
 const RegExpForBlockComment = /\/\*([\s\S]*?)\*\//gm;
 const RegExpForEmptyLine = /\n(\n)*( )*(\n)*\n/gm;
@@ -8,16 +7,16 @@ let tags = ['\'', '"', '`'],
     res;
 
 
-const handleStringArray = arr => {
+const arrHandler = arr => {
     let [a = [], ...b] = arr;
     arr = b.join('')
         .replace(RegExpForBlockComment, '')
         .replace(RegExpForLineComment, '')
-        .replace(RegExpForEmptyLine, '\n\n');
+        .replace(RegExpForEmptyLine, '\n');
     return [[...a, arr].join('')];
 };
 
-const removeComments = (code) => {
+const removeComments = code => {
     code = '\n' + code;
     const length = code.length;
     let parsedStrArr = [];
@@ -26,7 +25,7 @@ const removeComments = (code) => {
         if (tags.includes(code[i])) {
             let tag = code[i];
             let start = i;
-            parsedStrArr = handleStringArray(parsedStrArr);
+            parsedStrArr = arrHandler(parsedStrArr);
             while (1) {
                 start++;
                 parsedStrArr.push(code[start]);
@@ -38,6 +37,6 @@ const removeComments = (code) => {
             }
         }
     }
-    return res = handleStringArray(parsedStrArr).join('').slice(1, length);
+    return res = arrHandler(parsedStrArr).join('').slice(1, length);
 };
-writeFileSync('message.js', removeComments(code));
+writeFileSync('clear.js', removeComments(code));
